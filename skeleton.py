@@ -34,6 +34,7 @@ class Simulation:
     MenuOption = 0
     while (self.__WarrenCount > 0 or self.__FoxCount > 0) and MenuOption != 5:
       print()
+      print("0. Advance 10 time periods hiding detail")
       print("1. Advance to next time period showing detail")
       print("2. Advance to next time period hiding detail")
       print("3. Inspect fox")
