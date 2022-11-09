@@ -454,12 +454,13 @@ class Rabbit(Animal):
 
 def Main():
   MenuOption = 0
-  while MenuOption != 3:
+  while MenuOption != 4:
     print("Predator Prey Simulation Main Menu")
     print()
     print("1. Run simulation with default settings")
     print("2. Run simulation with custom settings")
-    print("3. Exit")
+    print("3. Rabbit Paradise")
+    print("4. Exit")
     print()
     MenuOption = int(input("Select option: "))
     if MenuOption == 1 or MenuOption == 2:
