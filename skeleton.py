@@ -42,10 +42,15 @@ class Simulation:
       print("5. Exit")
       print()
       MenuOption = int(input("Select option: "))
+      if MenuOption == 0:
+        self.__TimePeriod += 10
+        self.ShowDetail = False
+        self.__AdvanceTimePeriod()
       if MenuOption == 1:
         self.__TimePeriod += 1
         self.__ShowDetail = True
-        self.__AdvanceTimePeriod()
+        for x in range(10):
+          self.__AdvanceTimePeriod()
       if MenuOption == 2:
         self.__TimePeriod += 1
         self.__ShowDetail = False
@@ -124,11 +129,11 @@ class Simulation:
       for y in range (0, self.__LandscapeSize):
         self.__Landscape[x][y] = Location()
     if FixedInitialLocations:
-      self.__Landscape[1][1].Warren = Warren(self.__Variability, 38)
-      self.__Landscape[2][8].Warren = Warren(self.__Variability, 80) 
-      self.__Landscape[9][7].Warren = Warren(self.__Variability, 20)
-      self.__Landscape[10][3].Warren = Warren(self.__Variability, 52)
-      self.__Landscape[13][4].Warren = Warren(self.__Variability, 67)
+      self.__Landscape[1][1].Warren = Warren(self.__Variability, 38, genderRatio)
+      self.__Landscape[2][8].Warren = Warren(self.__Variability, 80, genderRatio) 
+      self.__Landscape[9][7].Warren = Warren(self.__Variability, 20, genderRatio)
+      self.__Landscape[10][3].Warren = Warren(self.__Variability, 52, genderRatio)
+      self.__Landscape[13][4].Warren = Warren(self.__Variability, 67, genderRatio)
       self.__WarrenCount = 5
       self.__Landscape[2][10].Fox = Fox(self.__Variability)
       self.__Landscape[6][1].Fox = Fox(self.__Variability)
@@ -217,19 +222,21 @@ class Simulation:
       print()
 
 class Warren:
-  def __init__(self, Variability, RabbitCount = 0):
+  def __init__(self, Variability, RabbitCount = 0, genderRatio):
     self.__MAX_RABBITS_IN_WARREN = 99
     self.__RabbitCount = RabbitCount
     self.__PeriodsRun = 0
     self.__AlreadySpread = False
     self.__Variability = Variability
     self.__Rabbits = []
+    self.genderRatio = genderRatio
     for Count in range(0, self.__MAX_RABBITS_IN_WARREN):
       self.__Rabbits.append(None)
     if self.__RabbitCount == 0:
       self.__RabbitCount = int(self.__CalculateRandomValue(int(self.__MAX_RABBITS_IN_WARREN / 4), self.__Variability))
     for r in range (0, self.__RabbitCount):
       self.__Rabbits[r] = Rabbit(self.__Variability)
+      
 
   def __CalculateRandomValue(self, BaseValue, Variability):
     return BaseValue - (BaseValue * Variability / 100) + (BaseValue * random.randint(0, Variability * 2) / 100)
@@ -305,7 +312,7 @@ class Warren:
           Mate = random.randint(0, self.__RabbitCount - 1)
         CombinedReproductionRate = (self.__Rabbits[r].GetReproductionRate() + self.__Rabbits[Mate].GetReproductionRate()) / 2
         if CombinedReproductionRate >= 1:
-          self.__Rabbits[self.__RabbitCount + Babies] = Rabbit(self.__Variability, CombinedReproductionRate)
+          self.__Rabbits[self.__RabbitCount + Babies] = Rabbit(self.__Variability, CombinedReproductionRate, self.genderRatio)
           Babies += 1
     self.__RabbitCount = self.__RabbitCount + Babies
     if ShowDetail:
@@ -426,12 +433,14 @@ class Genders(enum.Enum):
   Female = 2
     
 class Rabbit(Animal):
-  def __init__(self, Variability, ParentsReproductionRate = 1.2):
+  def __init__(self, Variability, ParentsReproductionRate = 1.2, genderRatio):
     self.__DEFAULT_LIFE_SPAN = 4
     self.__DEFAULT_PROBABILITY_DEATH_OTHER_CAUSES  = 0.05
     super(Rabbit, self).__init__(self.__DEFAULT_LIFE_SPAN, self.__DEFAULT_PROBABILITY_DEATH_OTHER_CAUSES, Variability)
     self.__ReproductionRate = ParentsReproductionRate * self._CalculateRandomValue(100, Variability) / 100
-    if random.randint(0, 100) < 50:
+    self.genderRatio = genderRatio
+    maleper = (genderRatio/(genderRatio+1))*100
+    if random.randint(0, 100) < maleper:
       self.__Gender = Genders.Male
     else:
       self.__Gender = Genders.Female
