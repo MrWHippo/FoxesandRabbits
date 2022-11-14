@@ -46,7 +46,8 @@ class Simulation:
       if MenuOption == 0:
         self.__TimePeriod += 10
         self.ShowDetail = False
-        self.__AdvanceTimePeriod()
+        for x in range(10):
+          self.__AdvanceTimePeriod()
       if MenuOption == 1:
         self.__TimePeriod += 1
         self.__ShowDetail = True
@@ -135,6 +136,7 @@ class Simulation:
       self.__Landscape[9][7].Warren = Warren(self.__Variability, 20, self.genderRatio)
       self.__Landscape[10][3].Warren = Warren(self.__Variability, 52, self.genderRatio)
       self.__Landscape[13][4].Warren = Warren(self.__Variability, 67, self.genderRatio)
+      self.__Landscape[11][4].Warren = GiantWarren(self.__Variability, 115 , self.genderRatio)
       self.__WarrenCount = 5
       self.__Landscape[2][10].Fox = Fox(self.__Variability)
       self.__Landscape[6][1].Fox = Fox(self.__Variability)
@@ -223,9 +225,9 @@ class Simulation:
       print()
 
 class Warren:
-  def __init__(self, Variability, RabbitCount = 0, genderRatio = 1):
-    self.__MAX_RABBITS_IN_WARREN = 99
-    self.__RabbitCount = RabbitCount
+  def __init__(self, Variability, RabbitCount = 0, genderRatio = 1, MaxRabbits = 99):
+    self.__MAX_RABBITS_IN_WARREN = MaxRabbits
+    self._RabbitCount = RabbitCount
     self.__PeriodsRun = 0
     self.__AlreadySpread = False
     self.__Variability = Variability
@@ -233,9 +235,9 @@ class Warren:
     self.genderRatio = genderRatio
     for Count in range(0, self.__MAX_RABBITS_IN_WARREN):
       self.__Rabbits.append(None)
-    if self.__RabbitCount == 0:
-      self.__RabbitCount = int(self.__CalculateRandomValue(int(self.__MAX_RABBITS_IN_WARREN / 4), self.__Variability))
-    for r in range (0, self.__RabbitCount):
+    if self._RabbitCount == 0:
+      self._RabbitCount = int(self.__CalculateRandomValue(int(self.__MAX_RABBITS_IN_WARREN / 4), self.__Variability))
+    for r in range (0, self._RabbitCount):
       self.__Rabbits[r] = Rabbit(self.__Variability)
       
 
@@ -243,39 +245,39 @@ class Warren:
     return BaseValue - (BaseValue * Variability / 100) + (BaseValue * random.randint(0, Variability * 2) / 100)
 
   def GetRabbitCount(self): 
-    return self.__RabbitCount
+    return self._RabbitCount
   
   def NeedToCreateNewWarren(self): 
-    if self.__RabbitCount == self.__MAX_RABBITS_IN_WARREN and not self.__AlreadySpread:
+    if self._RabbitCount == self.__MAX_RABBITS_IN_WARREN and not self.__AlreadySpread:
       self.__AlreadySpread = True
       return True
     else:
       return False
     
   def WarrenHasDiedOut(self):
-    if self.__RabbitCount == 0:
+    if self._RabbitCount == 0:
       return True
     else:
       return False
 
   def AdvanceGeneration(self, ShowDetail):
     self.__PeriodsRun += 1
-    if self.__RabbitCount > 0:
+    if self._RabbitCount > 0:
       self.__KillByOtherFactors(ShowDetail)
-    if self.__RabbitCount > 0:
+    if self._RabbitCount > 0:
       self.__AgeRabbits(ShowDetail)
-    if self.__RabbitCount > 0 and self.__RabbitCount <= self.__MAX_RABBITS_IN_WARREN:
+    if self._RabbitCount > 0 and self._RabbitCount <= self.__MAX_RABBITS_IN_WARREN:
       if self.__ContainsMales():
         self.__MateRabbits(ShowDetail)
-    if self.__RabbitCount == 0 and ShowDetail:
+    if self._RabbitCount == 0 and ShowDetail:
       print("  All rabbits in warren are dead")
     
   def EatRabbits(self, RabbitsToEat):
     DeathCount = 0
-    if RabbitsToEat > self.__RabbitCount:
-      RabbitsToEat = self.__RabbitCount
+    if RabbitsToEat > self._RabbitCount:
+      RabbitsToEat = self._RabbitCount
     while DeathCount < RabbitsToEat:
-      RabbitNumber = random.randint(0, self.__RabbitCount - 1)
+      RabbitNumber = random.randint(0, self._RabbitCount - 1)
       if not self.__Rabbits[RabbitNumber] is None:
         self.__Rabbits[RabbitNumber] = None
         DeathCount += 1
@@ -284,7 +286,7 @@ class Warren:
 
   def __KillByOtherFactors(self, ShowDetail):
     DeathCount = 0
-    for r in range (0, self.__RabbitCount):
+    for r in range (0, self._RabbitCount):
       if self.__Rabbits[r].CheckIfKilledByOtherFactor():
         self.__Rabbits[r] = None
         DeathCount += 1
@@ -294,7 +296,7 @@ class Warren:
 
   def __AgeRabbits(self, ShowDetail):
     DeathCount = 0
-    for r in range (0, self.__RabbitCount):
+    for r in range (0, self._RabbitCount):
       self.__Rabbits[r].CalculateNewAge()
       if self.__Rabbits[r].CheckIfDead():
         self.__Rabbits[r] = None
@@ -306,16 +308,16 @@ class Warren:
   def __MateRabbits(self, ShowDetail):
     Mate = 0
     Babies = 0 
-    for r in range (0, self.__RabbitCount):
-      if self.__Rabbits[r].IsFemale() and self.__RabbitCount + Babies < self.__MAX_RABBITS_IN_WARREN:
-        Mate = random.randint(0, self.__RabbitCount - 1)
+    for r in range (0, self._RabbitCount):
+      if self.__Rabbits[r].IsFemale() and self._RabbitCount + Babies < self.__MAX_RABBITS_IN_WARREN:
+        Mate = random.randint(0, self._RabbitCount - 1)
         while Mate == r or self.__Rabbits[Mate].IsFemale():
-          Mate = random.randint(0, self.__RabbitCount - 1)
+          Mate = random.randint(0, self._RabbitCount - 1)
         CombinedReproductionRate = (self.__Rabbits[r].GetReproductionRate() + self.__Rabbits[Mate].GetReproductionRate()) / 2
         if CombinedReproductionRate >= 1:
-          self.__Rabbits[self.__RabbitCount + Babies] = Rabbit(self.__Variability, CombinedReproductionRate, self.genderRatio)
+          self.__Rabbits[self._RabbitCount + Babies] = Rabbit(self.__Variability, CombinedReproductionRate, self.genderRatio)
           Babies += 1
-    self.__RabbitCount = self.__RabbitCount + Babies
+    self._RabbitCount = self._RabbitCount + Babies
     if ShowDetail:
       print(" ", Babies, "baby rabbits born.")
 
@@ -323,29 +325,45 @@ class Warren:
     if DeathCount > 0:
       ShiftTo = 0
       ShiftFrom  = 0
-      while ShiftTo < self.__RabbitCount - DeathCount:
+      while ShiftTo < self._RabbitCount - DeathCount:
         while self.__Rabbits[ShiftFrom] is None:
           ShiftFrom += 1
         if ShiftTo != ShiftFrom:
           self.__Rabbits[ShiftTo] = self.__Rabbits[ShiftFrom]
         ShiftTo += 1
         ShiftFrom += 1
-      self.__RabbitCount = self.__RabbitCount - DeathCount
+      self._RabbitCount = self._RabbitCount - DeathCount
 
   def __ContainsMales(self):
     Males = False
-    for r in range (0, self.__RabbitCount):
+    for r in range (0, self._RabbitCount):
       if not self.__Rabbits[r].IsFemale():
         Males = True
     return Males
 
   def Inspect(self):
-    print("Periods Run", self.__PeriodsRun, "Size", self.__RabbitCount)
+    print("Periods Run", self.__PeriodsRun, "Size", self._RabbitCount)
 
   def ListRabbits(self):
-    if self.__RabbitCount > 0:
-      for r in range (0, self.__RabbitCount):
+    if self._RabbitCount > 0:
+      for r in range (0, self._RabbitCount):
         self.__Rabbits[r].Inspect()
+
+class GiantWarren(Warren):
+  def __init__(self, Variability, RabbitCount = 0, genderRatio = 1):
+    super().__init__(Variability , RabbitCount = 115, genderRatio = 1, MaxRabbits = 200)
+    self.__MAX_RABBITS_IN_WARREN = 200
+    self._RabbitCount = RabbitCount
+    self.genderRatio = genderRatio
+
+  def NeedToCreateNewWarren(self):
+    if self._RabbitCount == self.__MAX_RABBITS_IN_WARREN:
+      return True
+    else:
+      return False
+  
+  def GetRabbitCount(self):
+    return self._RabbitCount
 
 class Animal:
   _ID = 1
@@ -500,7 +518,7 @@ def Main():
         Variability = 1
         FixedInitialLocations = False
         genderRatio = 1
-      else:
+      elif MenuOption != 4:
         LandscapeSize = int(input("Landscape Size: "))
         InitialWarrenCount = int(input("Initial number of warrens: "))
         InitialFoxCount = int(input("Initial number of foxes: "))
