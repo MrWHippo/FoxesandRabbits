@@ -11,6 +11,7 @@ class Location:
   def __init__(self):
     self.Fox = None
     self.Warren = None
+    self.Den = None
 
 class Simulation:
   def __init__(self, LandscapeSize, InitialWarrenCount, InitialFoxCount, Variability, FixedInitialLocations, genderRatio):
@@ -144,6 +145,7 @@ class Simulation:
       self.__Landscape[11][13].Fox = Fox(self.__Variability)
       self.__Landscape[12][4].Fox = Fox(self.__Variability)
       self.__FoxCount = 5
+      self.__Landscape[2][3].Den = Den()
     else:
       for w in range (0, InitialWarrenCount):
         self.__CreateNewWarren()
@@ -223,6 +225,18 @@ class Simulation:
           print(" ", end = "")
         print("|", end = "")
       print()
+
+class Den:
+  def __init__(self):
+    self.__NumberOfFoxesSpawned = 0
+
+  def SpawnInFox(self):
+    x = random.randint(11)
+    y = random.randint(11)
+
+
+
+  pass
 
 class Warren:
   def __init__(self, Variability, RabbitCount = 0, genderRatio = 1, MaxRabbits = 99):
