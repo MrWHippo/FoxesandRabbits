@@ -389,6 +389,10 @@ class Fox(Animal):
     super(Fox, self).__init__(self.__DEFAULT_LIFE_SPAN, self.__DEFAULT_PROBABILITY_DEATH_OTHER_CAUSES, Variability)
     self.__FoodUnitsNeeded = int(10 * self._CalculateRandomValue(100, Variability) / 100)
     self.__FoodUnitsConsumedThisPeriod  = 0
+    if random.randint(1, 4) == 1:
+      self.__Gender = Genders.Male
+    else:
+      self.__Gender = Genders.Female
 
   def AdvanceGeneration(self, ShowDetail):
     if self.__FoodUnitsConsumedThisPeriod == 0:
@@ -413,10 +417,13 @@ class Fox(Animal):
   def ResetFoodConsumed(self):
     self.__FoodUnitsConsumedThisPeriod = 0
 
-  def ReproduceThisPeriod(self): 
-    REPRODUCTION_PROBABILITY  = 0.25
-    if random.randint(0, 100) < REPRODUCTION_PROBABILITY * 100:
-      return True
+  def ReproduceThisPeriod(self):
+    if self.__Gender == Genders.Female:
+      REPRODUCTION_PROBABILITY  = 0.25
+      if random.randint(0, 100) < REPRODUCTION_PROBABILITY * 100:
+        return True
+      else:
+        return False
     else:
       return False
 
@@ -427,6 +434,10 @@ class Fox(Animal):
     super(Fox, self).Inspect()
     print("Food needed", self.__FoodUnitsNeeded, "", end = "")
     print("Food eaten", self.__FoodUnitsConsumedThisPeriod, "", end = "")
+    if self.__Gender == Genders.Female:
+      print("Gender: Female")
+    else:
+      print("Gender: Male")
     print()
 
 class Genders(enum.Enum):
