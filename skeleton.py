@@ -223,7 +223,7 @@ class Simulation:
       print()
 
 class Warren:
-  def __init__(self, Variability, RabbitCount = 0, genderRatio):
+  def __init__(self, Variability, RabbitCount = 0, genderRatio = 1):
     self.__MAX_RABBITS_IN_WARREN = 99
     self.__RabbitCount = RabbitCount
     self.__PeriodsRun = 0
@@ -434,7 +434,7 @@ class Genders(enum.Enum):
   Female = 2
     
 class Rabbit(Animal):
-  def __init__(self, Variability, ParentsReproductionRate = 1.2, genderRatio):
+  def __init__(self, Variability, ParentsReproductionRate = 1.2, genderRatio = 1):
     self.__DEFAULT_LIFE_SPAN = 4
     self.__DEFAULT_PROBABILITY_DEATH_OTHER_CAUSES  = 0.05
     super(Rabbit, self).__init__(self.__DEFAULT_LIFE_SPAN, self.__DEFAULT_PROBABILITY_DEATH_OTHER_CAUSES, Variability)
