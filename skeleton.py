@@ -13,7 +13,7 @@ class Location:
     self.Warren = None
 
 class Simulation:
-  def __init__(self, LandscapeSize, InitialWarrenCount, InitialFoxCount, Variability, FixedInitialLocations):
+  def __init__(self, LandscapeSize, InitialWarrenCount, InitialFoxCount, Variability, FixedInitialLocations, genderRatio):
     self.__ViewRabbits = ""
     self.__TimePeriod = 0
     self.__WarrenCount = 0
@@ -23,6 +23,7 @@ class Simulation:
     self.__Variability = Variability
     self.__FixedInitialLocations = FixedInitialLocations
     self.__Landscape = []
+    self.genderRatio = genderRatio
     for Count1 in range (self.__LandscapeSize):
       LandscapeRow = []
       for Count2 in range (self.__LandscapeSize):
@@ -129,11 +130,11 @@ class Simulation:
       for y in range (0, self.__LandscapeSize):
         self.__Landscape[x][y] = Location()
     if FixedInitialLocations:
-      self.__Landscape[1][1].Warren = Warren(self.__Variability, 38, genderRatio)
-      self.__Landscape[2][8].Warren = Warren(self.__Variability, 80, genderRatio) 
-      self.__Landscape[9][7].Warren = Warren(self.__Variability, 20, genderRatio)
-      self.__Landscape[10][3].Warren = Warren(self.__Variability, 52, genderRatio)
-      self.__Landscape[13][4].Warren = Warren(self.__Variability, 67, genderRatio)
+      self.__Landscape[1][1].Warren = Warren(self.__Variability, 38, self.genderRatio)
+      self.__Landscape[2][8].Warren = Warren(self.__Variability, 80, self.genderRatio) 
+      self.__Landscape[9][7].Warren = Warren(self.__Variability, 20, self.genderRatio)
+      self.__Landscape[10][3].Warren = Warren(self.__Variability, 52, self.genderRatio)
+      self.__Landscape[13][4].Warren = Warren(self.__Variability, 67, self.genderRatio)
       self.__WarrenCount = 5
       self.__Landscape[2][10].Fox = Fox(self.__Variability)
       self.__Landscape[6][1].Fox = Fox(self.__Variability)
@@ -480,19 +481,22 @@ def Main():
         InitialFoxCount = 5
         Variability = 0
         FixedInitialLocations = True
+        genderRatio = 1
       elif MenuOption == 3:
         LandscapeSize = 20
         InitialWarrenCount = 20
         InitialFoxCount = 0
         Variability = 1
         FixedInitialLocations = False
+        genderRatio = 1
       else:
         LandscapeSize = int(input("Landscape Size: "))
         InitialWarrenCount = int(input("Initial number of warrens: "))
         InitialFoxCount = int(input("Initial number of foxes: "))
         Variability = int(input("Randomness variability (percent): "))
         FixedInitialLocations = False
-      Sim = Simulation(LandscapeSize, InitialWarrenCount, InitialFoxCount, Variability, FixedInitialLocations)
+        genderRatio = int(input("Enter the ratio of female to male rabbits 1:"))
+      Sim = Simulation(LandscapeSize, InitialWarrenCount, InitialFoxCount, Variability, FixedInitialLocations, genderRatio)
   input()
 
 if __name__ == "__main__":
