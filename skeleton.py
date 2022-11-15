@@ -42,6 +42,7 @@ class Simulation:
       print("3. Inspect fox")
       print("4. Inspect warren")
       print("5. Exit")
+      print("6.Find biggest warren")
       print()
       MenuOption = int(input("Select option: "))
       if MenuOption == 0:
@@ -70,6 +71,9 @@ class Simulation:
           self.__ViewRabbits = input("View individual rabbits (y/n)? ")
           if self.__ViewRabbits == "y":
             self.__Landscape[x][y].Warren.ListRabbits()
+      elif MenuOption == 6:
+        bigX,bigY = self.FindBiggest()
+        print(f"Biggest warren at ({bigX},{bigY})")
     input()
     
   def __InputCoordinate(self, CoordinateName):
@@ -229,13 +233,24 @@ class Simulation:
         else:
           print(" ", end = "")
         if not self.__Landscape[x][y].Den is None:
-          print("D", self.__Landscape[x][y].Den.GetNumberOfFoxesSpawned())
+          print("D",self.__Landscape[x][y].Den.GetNumberOfFoxesSpawned(), end = "")
         else:
           print(" ", end = "")
         print("|", end = "")
       print()
     print("The average life expectancy of a fox stands at", Fox.getLifeExpect())
     print()
+
+  def FindBiggest(self):
+    rabbits = 0
+    for x in range (0, self.__LandscapeSize):
+      for y in range(0, self.__LandscapeSize):
+        if not self.__Landscape[x][y].Warren is None:
+          if self.__Landscape[x][y].Warren.GetRabbitCount() > rabbits:
+            rabbits = self.__Landscape[x][y].Warren.GetRabbitCount()
+            biggestX = x
+            biggestY = y
+    return biggestX,biggestY
 
 class Den:
   def __init__(self):
