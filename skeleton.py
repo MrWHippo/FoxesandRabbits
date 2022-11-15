@@ -234,6 +234,8 @@ class Simulation:
           print(" ", end = "")
         print("|", end = "")
       print()
+    print("The average life expectancy of a fox stands at", Fox.getLifeExpect())
+    print()
 
 class Den:
   def __init__(self):
@@ -422,6 +424,8 @@ class Animal:
     return BaseValue - (BaseValue * Variability / 100) + (BaseValue * random.randint(0, Variability * 2) / 100)
 
 class Fox(Animal):
+  _TotalDeadFoxes = 0
+  _TotalFoxAge = 0
   def __init__(self, Variability):
     self.__DEFAULT_LIFE_SPAN = 7
     self.__DEFAULT_PROBABILITY_DEATH_OTHER_CAUSES = 0.1
@@ -440,6 +444,7 @@ class Fox(Animal):
         print("  Fox dies as has eaten no food this period.")
     else:
       if self.CheckIfKilledByOtherFactor():
+        self.IfNewDeadFox()
         self._IsAlive = False
         if ShowDetail:
           print("  Fox killed by other factor.")
@@ -450,8 +455,22 @@ class Fox(Animal):
             print("  Fox ages further due to lack of food.")
         self.CalculateNewAge()
         if not self._IsAlive:
+          self.IfNewDeadFox()
           if ShowDetail:
             print("  Fox has died of old age.")
+  
+  def IfNewDeadFox(self):
+    if self._IsAlive == False:
+      Fox._TotalFoxAge += self._Age
+      Fox._TotalDeadFoxes += 1
+  
+  def getLifeExpect():
+    if Fox._TotalDeadFoxes > 0:
+      AverageLifeExpect = Fox._TotalFoxAge/Fox._TotalDeadFoxes
+    else:
+      AverageLifeExpect = 7
+    return AverageLifeExpect
+
 
   def ResetFoodConsumed(self):
     self.__FoodUnitsConsumedThisPeriod = 0
