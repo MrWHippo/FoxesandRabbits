@@ -43,6 +43,7 @@ class Simulation:
       print("4. Inspect warren")
       print("5. Exit")
       print("6.Find biggest warren")
+      print("7. Inspect all Rabbits")
       print()
       MenuOption = int(input("Select option: "))
       if MenuOption == 0:
@@ -74,6 +75,8 @@ class Simulation:
       elif MenuOption == 6:
         bigX,bigY = self.FindBiggest()
         print(f"Biggest warren at ({bigX},{bigY})")
+      elif MenuOption == 7:
+        pass
     input()
     
   def __InputCoordinate(self, CoordinateName):
@@ -252,6 +255,15 @@ class Simulation:
             biggestY = y
     return biggestX,biggestY
 
+  def MakeListOfAllRabbits(self):
+    RabbitsList = []
+    for x in range(0, self.__LandscapeSize):
+      for y in range(0, self.__LandscapeSize):
+        if not self.__Landscape[x][y].Warren is None:
+          for i in range(0, len(self.__Landscape[x][y].Warren.GetList())):
+            RabbitsList.append(self.__Landscape[x][y].Warren.GetList(i))
+          
+
 class Den:
   def __init__(self):
     self.__NumberOfFoxesSpawned = 0
@@ -386,6 +398,9 @@ class Warren:
     if self._RabbitCount > 0:
       for r in range (0, self._RabbitCount):
         self.__Rabbits[r].Inspect()
+
+  def GetRabbitsList(self):
+    return self.ListRabbits()
 
 class GiantWarren(Warren):
   def __init__(self, Variability, RabbitCount = 0, genderRatio = 1):
@@ -563,6 +578,9 @@ class Rabbit(Animal):
     self._Age += 1
     if self._Age >= self._NaturalLifespan:
       self._IsAlive = False
+
+  def GetRabbitAge(self):
+    return self._Age
 
 def Main():
   MenuOption = 0
