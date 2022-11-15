@@ -45,15 +45,14 @@ class Simulation:
       print()
       MenuOption = int(input("Select option: "))
       if MenuOption == 0:
-        self.__TimePeriod += 10
-        self.ShowDetail = False
+        self.__ShowDetail = False
         for x in range(10):
+          self.__TimePeriod += 1
           self.__AdvanceTimePeriod()
       if MenuOption == 1:
         self.__TimePeriod += 1
         self.__ShowDetail = True
-        for x in range(10):
-          self.__AdvanceTimePeriod()
+        self.__AdvanceTimePeriod()
       if MenuOption == 2:
         self.__TimePeriod += 1
         self.__ShowDetail = False
@@ -117,6 +116,12 @@ class Simulation:
             if self.__ShowDetail:
               self.__Landscape[x][y].Fox.Inspect()
             self.__Landscape[x][y].Fox.ResetFoodConsumed()
+    for x in range (0, self.__LandscapeSize):
+      for y in range (0, self.__LandscapeSize):
+        if not self.__Landscape[x][y].Den is None:
+          if self.__TimePeriod % 3 == 0:
+            self.__Landscape[x][y].Den.SpawnInFox()
+            NewFoxCount += 1
     if NewFoxCount > 0:
       if self.__ShowDetail:
         print("New foxes born: ")
@@ -223,6 +228,10 @@ class Simulation:
           print("F", end = "")
         else:
           print(" ", end = "")
+        if not self.__Landscape[x][y].Den is None:
+          print("D", self.__Landscape[x][y].Den.GetNumberOfFoxesSpawned())
+        else:
+          print(" ", end = "")
         print("|", end = "")
       print()
 
@@ -231,12 +240,10 @@ class Den:
     self.__NumberOfFoxesSpawned = 0
 
   def SpawnInFox(self):
-    x = random.randint(11)
-    y = random.randint(11)
+    self.__NumberOfFoxesSpawned += 1
 
-
-
-  pass
+  def GetNumberOfFoxesSpawned(self):
+    return self.__NumberOfFoxesSpawned
 
 class Warren:
   def __init__(self, Variability, RabbitCount = 0, genderRatio = 1, MaxRabbits = 99):
