@@ -438,6 +438,12 @@ class Animal:
   def _CalculateRandomValue(self, BaseValue, Variability):
     return BaseValue - (BaseValue * Variability / 100) + (BaseValue * random.randint(0, Variability * 2) / 100)
 
+  def GetProbOfDeath(self):
+    return self._ProbabilityOfDeathOtherCauses
+  
+  def SetProbOfDeath(self, ProbOfDeath):
+    self._ProbabilityOfDeathOtherCauses = ProbOfDeath
+
 class Fox(Animal):
   _TotalDeadFoxes = 0
   _TotalFoxAge = 0
@@ -546,6 +552,17 @@ class Rabbit(Animal):
     
   def GetReproductionRate(self): 
     return self.__ReproductionRate
+
+  def CalculateDeathProb(self):
+    ProbOfDeath = self.GetProbOfDeath()
+    ProbOfDeath *= 0.1
+    self.SetProbOfDeath(ProbOfDeath)
+  
+  def CalculateNewAge(self):
+    self.CalculateDeathProb()
+    self._Age += 1
+    if self._Age >= self._NaturalLifespan:
+      self._IsAlive = False
 
 def Main():
   MenuOption = 0
