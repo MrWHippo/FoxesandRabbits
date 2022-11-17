@@ -76,7 +76,9 @@ class Simulation:
         bigX,bigY = self.FindBiggest()
         print(f"Biggest warren at ({bigX},{bigY})")
       elif MenuOption == 7:
-        pass
+        Rlist = self.displayRW()
+        for x in range(len(Rlist)):
+          print(Rlist[x].Inspect())
     input()
     
   def __InputCoordinate(self, CoordinateName):
@@ -138,6 +140,27 @@ class Simulation:
       input()
     self.__DrawLandscape()
     print()
+
+  def displayRW(self):
+    RabbitsList = []
+    for x in range (0, self.__LandscapeSize):
+      for y in range (0, self.__LandscapeSize):
+        if not self.__Landscape[x][y].Warren is None:
+          temp = self.__Landscape[x][y].Warren.GetRabbitsList()
+          for i in range (len(temp)-1):
+            RabbitsList.append(temp[i])
+    
+    NeedSort = True
+    while NeedSort == True:
+      NeedSort = False
+      for i in range (len(RabbitsList)-1):
+        if RabbitsList[i].GetRabbitAge() <= RabbitsList[i+1].GetRabbitAge():
+          rabbitup = RabbitsList[i]
+          rabbitdown = RabbitsList[i+1]
+          RabbitsList[i] = rabbitdown
+          RabbitsList[i+1] = rabbitup
+          NeedSort = True
+    return RabbitsList
 
   def __CreateLandscapeAndAnimals(self, InitialWarrenCount, InitialFoxCount, FixedInitialLocations):
     for x in range (0, self.__LandscapeSize):
@@ -400,7 +423,11 @@ class Warren:
         self.__Rabbits[r].Inspect()
 
   def GetRabbitsList(self):
-    return self.ListRabbits()
+    ListRabbits = []
+    if self._RabbitCount > 0:
+      for r in range (0, self._RabbitCount):
+        ListRabbits.append(self.__Rabbits[r])
+    return ListRabbits
 
 class GiantWarren(Warren):
   def __init__(self, Variability, RabbitCount = 0, genderRatio = 1):
